@@ -7,6 +7,30 @@
 //
 
 import UIKit
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
+
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l > r
+  default:
+    return rhs < lhs
+  }
+}
+
 
 class ViewController: UIViewController {
     let cusView = UILabel()
@@ -19,54 +43,54 @@ class ViewController: UIViewController {
     }
     func initialSelf() -> Void {
         let view1 = UILabel()
-        view1.frame = CGRectMake(0, 0, self.view.frame.width, self.view.frame.height * 0.5)
-        view1.font = UIFont.systemFontOfSize(12)
+        view1.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: self.view.frame.height * 0.5)
+        view1.font = UIFont.systemFont(ofSize: 12)
         view1.text = "第一个问题"
-        view1.textAlignment = NSTextAlignment.Center
-        view1.textColor = UIColor.blackColor()
-        view1.backgroundColor = UIColor.greenColor()
+        view1.textAlignment = NSTextAlignment.center
+        view1.textColor = UIColor.black
+        view1.backgroundColor = UIColor.green
         self.view.addSubview(view1)
         let line = UIView()
-        line.backgroundColor = UIColor.grayColor()
-        line.frame = CGRectMake(0, self.view.frame.height * 0.5, self.view.frame.width, 2)
+        line.backgroundColor = UIColor.gray
+        line.frame = CGRect(x: 0, y: self.view.frame.height * 0.5, width: self.view.frame.width, height: 2)
         self.view.addSubview(line)
         let view2 = UILabel()
-        view2.frame = CGRectMake(0, self.view.frame.height * 0.5, self.view.frame.width, self.view.frame.height * 0.5)
-        view2.font = UIFont.systemFontOfSize(12)
+        view2.frame = CGRect(x: 0, y: self.view.frame.height * 0.5, width: self.view.frame.width, height: self.view.frame.height * 0.5)
+        view2.font = UIFont.systemFont(ofSize: 12)
         view2.text = "第二个问题"
-        view2.textAlignment = NSTextAlignment.Center
-        view2.backgroundColor = UIColor.redColor()
-        view2.textColor = UIColor.blackColor()
+        view2.textAlignment = NSTextAlignment.center
+        view2.backgroundColor = UIColor.red
+        view2.textColor = UIColor.black
         self.view.addSubview(view2)
         
     }
     func initialCusView() -> Void {
-        self.cusView.frame = CGRectMake(-150, -150, 150, 150)
-        self.cusView.font = UIFont.systemFontOfSize(12)
-        self.cusView.textAlignment = NSTextAlignment.Center
-        self.cusView.textColor = UIColor.whiteColor()
+        self.cusView.frame = CGRect(x: -150, y: -150, width: 150, height: 150)
+        self.cusView.font = UIFont.systemFont(ofSize: 12)
+        self.cusView.textAlignment = NSTextAlignment.center
+        self.cusView.textColor = UIColor.white
         self.view.addSubview(self.cusView)
     }
-    func startAsking(things:String) -> Void {
+    func startAsking(_ things:String) -> Void {
         self.cusView.text = things
-        self.cusView.frame = CGRectMake(0, 0, 150, 150)
-        self.cusView.backgroundColor = UIColor.blackColor()
-        UIView.animateWithDuration(3, animations: {
-            self.cusView.backgroundColor = UIColor.grayColor()
-            self.cusView.frame = CGRectMake(self.view.frame.width - 150, self.view.frame.height - 150, 150, 150)
-        }) { (true) in
+        self.cusView.frame = CGRect(x: 0, y: 0, width: 150, height: 150)
+        self.cusView.backgroundColor = UIColor.black
+        UIView.animate(withDuration: 3, animations: {
+            self.cusView.backgroundColor = UIColor.gray
+            self.cusView.frame = CGRect(x: self.view.frame.width - 150, y: self.view.frame.height - 150, width: 150, height: 150)
+        }, completion: { (true) in
             self.isAnimating = false
-        }
+        }) 
     }
     
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if self.isAnimating {
             return
         }
-        let location = touches.first?.locationInView(self.view)
+        let location = touches.first?.location(in: self.view)
         
-        let thing = OCTool.startAskingQuestionWithTag(location?.y > UIScreen.mainScreen().bounds.size.height * 0.5 ? 1 : 0)
-        self.startAsking(thing)
+        let thing = OCTool.startAskingQuestion(withTag: location?.y > UIScreen.main.bounds.size.height * 0.5 ? 1 : 0)
+        self.startAsking(thing!)
         self.isAnimating = true
     }
     override func didReceiveMemoryWarning() {
